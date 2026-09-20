@@ -1,30 +1,107 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:historial_medico/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Las cinco pantallas caben en un teléfono', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.pumpWidget(const HistorialApp());
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    for (final label in [
+      'Historial',
+      'Documentos',
+      'Accesos',
+      'Perfil',
+      'Inicio',
+    ]) {
+      await tester.tap(find.text(label));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets('Navega, filtra y muestra el detalle', (tester) async {
+    await tester.pumpWidget(const HistorialApp());
+
+    expect(find.text('Hola, Alex'), findsOneWidget);
+
+    await tester.tap(find.text('Historial'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Recetas'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Consulta de seguimiento'), findsNothing);
+
+    await tester.tap(find.text('Receta de consulta'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Cerrar'), findsOneWidget);
+
+    await tester.tap(find.text('Cerrar'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'inexistente');
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('No encontramos registros con esos filtros.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Revocación confirmada actualiza Inicio', (tester) async {
+    await tester.pumpWidget(const HistorialApp());
+
+    await tester.tap(find.text('Accesos'));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Revocar acceso de ejemplo'));
+    await tester.tap(find.text('Revocar acceso de ejemplo'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Cancelar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Acceso activo · Simulado'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('Revocar acceso de ejemplo'));
+    await tester.tap(find.text('Revocar acceso de ejemplo'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Revocar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Acceso revocado · Simulado'), findsOneWidget);
+
+    await tester.tap(find.text('Inicio'));
+    await tester.pumpAndSettle();
+
+    // Desplaza Inicio hasta que se construya y aparezca el contador.
+    await tester.scrollUntilVisible(
+      find.text('0 acceso activo'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('0 acceso activo'), findsOneWidget);
+
+    await tester.tap(find.text('Documentos'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tus documentos'), findsOneWidget);
+
+    await tester.tap(find.text('Perfil'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Alex Rivera'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
