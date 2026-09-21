@@ -42,3 +42,9 @@ flutter test
 ## Siguientes etapas
 
 Autenticación, perfil editable, almacenamiento de documentos y permisos comprobados en servidor. Diferenciar siempre información declarada por el paciente de registros aportados por profesionales. No cargar datos médicos reales en este prototipo.
+
+## Flujo de acceso (prototipo)
+
+La aplicación abre en Bienvenida. Crear cuenta e Iniciar sesión permiten probar formularios con validación local de correo y contraseña; el registro también comprueba nombre y confirmación. No existe autenticación real, no se crean cuentas y no se guardan ni envían los valores introducidos. Usa exclusivamente datos ficticios. El diálogo de validación permite abrir el mismo perfil de ejemplo de Alex.
+
+Puedes entrar directamente con Explorar demostración y salir desde Perfil. Al salir, se elimina la pantalla de demostración y su estado en memoria. Los formularios se descartan al entrar en la demostración. La siguiente etapa será seleccionar y configurar el servicio de autenticación.

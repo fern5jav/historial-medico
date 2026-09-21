@@ -11,6 +11,9 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(const HistorialApp());
+    await tester.ensureVisible(find.text('Explorar demostración'));
+    await tester.tap(find.text('Explorar demostración'));
+    await tester.pumpAndSettle();
 
     for (final label in [
       'Historial',
@@ -28,6 +31,9 @@ void main() {
 
   testWidgets('Navega, filtra y muestra el detalle', (tester) async {
     await tester.pumpWidget(const HistorialApp());
+    await tester.ensureVisible(find.text('Explorar demostración'));
+    await tester.tap(find.text('Explorar demostración'));
+    await tester.pumpAndSettle();
 
     expect(find.text('Hola, Alex'), findsOneWidget);
 
@@ -58,6 +64,9 @@ void main() {
 
   testWidgets('Revocación confirmada actualiza Inicio', (tester) async {
     await tester.pumpWidget(const HistorialApp());
+    await tester.ensureVisible(find.text('Explorar demostración'));
+    await tester.tap(find.text('Explorar demostración'));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Accesos'));
     await tester.pumpAndSettle();

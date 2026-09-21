@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_shell.dart';
+import 'screens/welcome_screen.dart';
 
 void main() => runApp(const HistorialApp());
 
@@ -21,6 +21,6 @@ class HistorialApp extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     ),
-    home: const HomeShell(),
+    home: const WelcomeScreen(),
   );
 }

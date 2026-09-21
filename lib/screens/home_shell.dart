@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../data/demo_records.dart';
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, this.onExit});
+  final VoidCallback? onExit;
   @override
   State<HomeShell> createState() => _HomeShellState();
 }
@@ -364,6 +365,12 @@ class _HomeShellState extends State<HomeShell> {
 
   List<Widget> profile() => [
     heading('Mi perfil', 'Información de un paciente ficticio.'),
+    if (widget.onExit != null)
+      OutlinedButton.icon(
+        onPressed: widget.onExit,
+        icon: const Icon(Icons.logout),
+        label: const Text('Salir de la demostración'),
+      ),
     panel(
       const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
