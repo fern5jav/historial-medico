@@ -1,3 +1,4 @@
+import 'patient_history_screen.dart';
 import 'patient_profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -146,7 +147,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     child: Padding(
                       padding: EdgeInsets.all(20),
                       child: Text(
-                        'Ya puedes guardar tu perfil de paciente. Los documentos, las consultas y los permisos para profesionales se integrarán después. La demostración contiene datos ficticios de Alex.',
+                        'Ya puedes guardar tu perfil y tus registros de salud. Los archivos adjuntos y los permisos para profesionales se integrarán después. La demostración contiene datos ficticios de Alex.',
                       ),
                     ),
                   ),
@@ -182,6 +183,19 @@ class _AccountScreenState extends State<AccountScreen> {
                           },
                     icon: const Icon(Icons.person_outline),
                     label: const Text('Mi perfil de paciente'),
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
+                    onPressed: busy
+                        ? null
+                        : () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) =>
+                                  PatientHistoryScreen(uid: widget.user.uid),
+                            ),
+                          ),
+                    icon: const Icon(Icons.history),
+                    label: const Text('Mi historial médico'),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton(

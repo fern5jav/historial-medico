@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function esPropietario(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+    function perfilValido() {
+      let datos = request.resource.data;
+      return datos.keys().hasAll(['nombre', 'fechaNacimiento', 'alergias', 'antecedentes', 'actualizadoEn'])
+        && datos.keys().hasOnly(['nombre', 'fechaNacimiento', 'alergias', 'antecedentes', 'actualizadoEn'])
+        && datos.nombre is string && datos.nombre.size() >= 2 && datos.nombre.size() <= 100
+        && datos.fechaNacimiento is string && datos.fechaNacimiento.size() <= 10
+        && datos.alergias is string && datos.alergias.size() <= 2000
+        && datos.antecedentes is string && datos.antecedentes.size() <= 4000
+        && datos.actualizadoEn == request.time;
+    }
+    function registroValido(uid) {
+      let datos = request.resource.data;
+      return datos.keys().hasAll(['titulo', 'fecha', 'categoria', 'descripcion', 'autorUid', 'origen', 'creadoEn'])
+        && datos.keys().hasOnly(['titulo', 'fecha', 'categoria', 'descripcion', 'autorUid', 'origen', 'creadoEn'])
+        && datos.titulo is string && datos.titulo.size() >= 2 && datos.titulo.size() <= 120
+        && datos.fecha is timestamp && datos.fecha >= timestamp.date(1900, 1, 1)
+        && datos.fecha <= request.time
+        && datos.categoria in ['Consulta', 'Estudio', 'Receta', 'Tratamiento', 'Otro']
+        && datos.descripcion is string && datos.descripcion.size() >= 5 && datos.descripcion.size() <= 4000
+        && datos.autorUid == uid && datos.origen == 'paciente'
+        && datos.creadoEn == request.time;
+    }
+    match /pacientes/{uid} {
+      allow get: if esPropietario(uid);
+      allow create, update: if esPropietario(uid) && perfilValido();
+      match /registros/{registroId} {
+        allow get, list: if esPropietario(uid);
+        allow create: if esPropietario(uid) && registroValido(uid);
+        // Los registros conservan su autoría y contenido original en esta etapa.
+        allow update, delete: if false;
+      }
+    }
+  }
+}
