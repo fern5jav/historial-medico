@@ -1,10 +1,38 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'screens/welcome_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'screens/auth_gate.dart';
 
-void main() => runApp(const HistorialApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await FirebaseAuth.instance.setLanguageCode('es');
+    runApp(const HistorialApp());
+  } catch (_) {
+    runApp(
+      const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: Text(
+                'No se pudo iniciar Firebase. Revisa la configuración y vuelve a abrir la aplicación.',
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class HistorialApp extends StatelessWidget {
-  const HistorialApp({super.key});
+  const HistorialApp({super.key, this.home});
+  final Widget? home;
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'Mi historial',
@@ -21,6 +49,6 @@ class HistorialApp extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     ),
-    home: const WelcomeScreen(),
+    home: home ?? const AuthGate(),
   );
 }

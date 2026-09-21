@@ -1,3 +1,4 @@
+import 'package:historial_medico/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:historial_medico/main.dart';
@@ -10,7 +11,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(const HistorialApp());
+    await tester.pumpWidget(const HistorialApp(home: WelcomeScreen()));
     await tester.ensureVisible(find.text('Explorar demostración'));
     await tester.tap(find.text('Explorar demostración'));
     await tester.pumpAndSettle();
@@ -30,7 +31,7 @@ void main() {
   });
 
   testWidgets('Navega, filtra y muestra el detalle', (tester) async {
-    await tester.pumpWidget(const HistorialApp());
+    await tester.pumpWidget(const HistorialApp(home: WelcomeScreen()));
     await tester.ensureVisible(find.text('Explorar demostración'));
     await tester.tap(find.text('Explorar demostración'));
     await tester.pumpAndSettle();
@@ -63,7 +64,7 @@ void main() {
   });
 
   testWidgets('Revocación confirmada actualiza Inicio', (tester) async {
-    await tester.pumpWidget(const HistorialApp());
+    await tester.pumpWidget(const HistorialApp(home: WelcomeScreen()));
     await tester.ensureVisible(find.text('Explorar demostración'));
     await tester.tap(find.text('Explorar demostración'));
     await tester.pumpAndSettle();
